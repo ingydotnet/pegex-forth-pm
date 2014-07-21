@@ -1,5 +1,5 @@
 package Pegex::Forth;
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use Pegex::Base;
 use Pegex::Parser;
@@ -27,20 +27,19 @@ sub command {
 
 sub run {
     my ($self, $input) = @_;
-    my $runtime = Pegex::Forth::Exec->new;
+    my $exec = Pegex::Forth::Exec->new;
     my $parser = Pegex::Parser->new(
         grammar => Pegex::Forth::Grammar->new,
-        receiver => $runtime,
+        receiver => $exec,
         # debug => 1,
     );
     $parser->parse($input);
-    my $values = $runtime->stack;
+    my $values = $exec->runtime->stack;
     return unless @$values;
     wantarray ? @$values : $values->[-1];
 }
 
-
-
+#------------------------------------------------------------------------------
 package Pegex::Forth::Grammar;
 use Pegex::Base;
 extends 'Pegex::Grammar';
@@ -57,54 +56,23 @@ word: /- ( NS+ ) +/
 ws: / (: WS | EOS ) /
 ...
 
+#------------------------------------------------------------------------------
 package Pegex::Forth::Exec;
 use Pegex::Base;
 extends 'Pegex::Tree';
 
-has stack => [];
-my $dict = {};
-has dict => sub { +{ %$dict } };
+use Pegex::Forth::Runtime;
+
+has runtime => Pegex::Forth::Runtime->new;
 
 sub got_number {
     my ($self, $number) = @_;
-    $self->push($number);
+    $self->runtime->push($number);
 }
 
 sub got_word {
     my ($self, $word) = @_;
-    my $function = $self->dict->{$word}
-        or die "Undefined word '$word'\n";
-    $function->($self);
+    $self->runtime->call($word);
 }
-
-sub push {
-    my ($self, @items) = @_;
-    push @{$self->stack}, @items;
-}
-
-sub pop {
-    my ($self, $count) = (@_, 1);
-    my $stack = $self->stack;
-    die "Stack underflow\n" unless @$stack >= $count;
-    return splice(@$stack, 0 - $count, $count);
-}
-
-$dict->{'.'} = sub {
-    my ($self) = @_;
-    my $num = $self->pop;
-    print "$num\n";
-};
-
-$dict->{'+'} = sub {
-    my ($self) = @_;
-    my ($a, $b) = $self->pop(2);
-    $self->push($a + $b);
-};
-
-$dict->{'-'} = sub {
-    my ($self) = @_;
-    my ($a, $b) = $self->pop(2);
-    $self->push($a - $b);
-};
 
 1;

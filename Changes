@@ -1,4 +1,9 @@
 ---
+version: 0.04
+date:    Mon Jul 21 15:39:05 PDT 2014
+changes:
+- Put runtime stuff (including dictionary) into ::Runtime class.
+---
 version: 0.03
 date:    Mon Jul 21 13:17:41 PDT 2014
 changes:
