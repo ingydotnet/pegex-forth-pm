@@ -18,6 +18,7 @@ perl:
 install:
 - cpanm --quiet --notest
   Devel::Cover::Report::Coveralls
+  Capture::Tiny
   Pegex
 
 script:

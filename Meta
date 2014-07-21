@@ -1,7 +1,7 @@
 =meta: 0.0.1
 
 name: Pegex-Forth
-version: 0.01
+version: 0.02
 abstract: Forth Interpreter with a Pegex Compiler
 homepage: http://pegex.org
 
@@ -18,6 +18,10 @@ author:
 requires:
   perl: 5.8.1
   Pegex: 0.40
+
+test:
+  requires:
+    Capture::Tiny: 0
 
 devel:
   git: https://github.com/ingydotnet/pegex-forth-pm

@@ -16,7 +16,16 @@ Pegex::Forth - Forth Interpreter with a Pegex Compiler
 
 =head1 SYNOPSIS
 
-    > echo '3 4 + .' | pegex-forth    # 7
+Commandline:
+
+    > pegex-forth program.forth
+    > echo '3 4 + .' | pegex-forth            # Print 7
+
+In code:
+
+    use Pegex::Forth;
+    Pegex::Forth->new->run('3 4 + .');        # Print 7
+    $num = Pegex::Forth->new->run('3 4 +');   # Return 7
 
 =head1 DESCRIPTION
 

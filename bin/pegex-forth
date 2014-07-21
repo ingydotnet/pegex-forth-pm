@@ -1,5 +1,8 @@
 #!/usr/bin/perl
 
+use strict;
 use Pegex::Forth;
 
-Pegex::Forth->run(@ARGV);
+Pegex::Forth->new(
+    args => [@ARGV],
+)->command;
