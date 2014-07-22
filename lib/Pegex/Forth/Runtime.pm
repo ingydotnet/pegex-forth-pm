@@ -1,12 +1,14 @@
 package Pegex::Forth::Runtime;
 use Pegex::Base;
+use Capture::Tiny ':all';
 
 has stack => [];
+has return_stack => [];
 
 sub call {
     my ($self, $word) = @_;
     my $function = $self->dict->{$word}
-        or die "Undefined word '$word'\n";
+        or die "Undefined word: '$word'\n";
     $function->($self);
 }
 
@@ -28,6 +30,13 @@ has dict => {
     my ($self) = @_;
     my $num = $self->pop;
     print "$num\n";
+},
+
+'.s' => sub {
+    my ($self) = @_;
+    my $stack = $self->stack;
+    my $size = @$stack;
+    print "<$size>" . join('', map " $_", @$stack) . "\n";
 },
 
 '+' => sub {

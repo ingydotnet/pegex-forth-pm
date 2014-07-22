@@ -1,4 +1,11 @@
 ---
+version: 0.06
+date:    Tue Jul 22 16:53:54 PDT 2014
+changes:
+- Refactor tests
+- Add .s support
+- Fix comments a bit
+---
 version: 0.05
 date:    Tue Jul 22 14:47:16 PDT 2014
 changes:

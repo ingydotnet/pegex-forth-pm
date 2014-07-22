@@ -1,5 +1,5 @@
 package Pegex::Forth;
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 use Pegex::Base;
 use Pegex::Parser;
@@ -52,7 +52,7 @@ token:
   | word
 
 number: /( DIGIT+ ) +/
-comment: /'(' ALL*? + ')' +/
+comment: /'(' + ALL*? ')' +/
 word: /( NS+ ) +/
 
 ws: / (: WS | EOS ) /
@@ -65,7 +65,7 @@ extends 'Pegex::Tree';
 
 use Pegex::Forth::Runtime;
 
-has runtime => Pegex::Forth::Runtime->new;
+has runtime => sub { Pegex::Forth::Runtime->new };
 
 sub got_number {
     my ($self, $number) = @_;
