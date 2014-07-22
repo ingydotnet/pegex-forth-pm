@@ -1,5 +1,5 @@
 package Pegex::Forth;
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 use Pegex::Base;
 use Pegex::Parser;
@@ -44,14 +44,16 @@ package Pegex::Forth::Grammar;
 use Pegex::Base;
 extends 'Pegex::Grammar';
 use constant text => <<'...';
-forth: token*
+forth: - token*
 
 token:
   | number
+  | comment
   | word
 
-number: /- ( DIGIT+ ) +/
-word: /- ( NS+ ) +/
+number: /( DIGIT+ ) +/
+comment: /'(' ALL*? + ')' +/
+word: /( NS+ ) +/
 
 ws: / (: WS | EOS ) /
 ...
