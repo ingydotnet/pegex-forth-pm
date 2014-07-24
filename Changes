@@ -1,4 +1,9 @@
 ---
+version: 0.07
+date:    Thu Jul 24 10:49:47 PDT 2014
+changes:
+- Support words 0sp dup swap over drop rot
+---
 version: 0.06
 date:    Tue Jul 22 16:53:54 PDT 2014
 changes:

@@ -51,6 +51,40 @@ has dict => {
     $self->push($a - $b);
 },
 
+'0sp' => sub {
+    my ($self) = @_;
+    $self->{stack} = [];
+},
+
+dup => sub {
+    my ($self) = @_;
+    my ($a) = $self->pop(1);
+    $self->push($a, $a);
+},
+
+swap => sub {
+    my ($self) = @_;
+    my ($a, $b) = $self->pop(2);
+    $self->push($b, $a);
+},
+
+over => sub {
+    my ($self) = @_;
+    my ($a, $b) = $self->pop(2);
+    $self->push($a, $b, $a);
+},
+
+drop => sub {
+    my ($self) = @_;
+    my ($a) = $self->pop(1);
+},
+
+rot => sub {
+    my ($self) = @_;
+    my ($a, $b, $c) = $self->pop(3);
+    $self->push($b, $c, $a);
+},
+
 };
 
 1
