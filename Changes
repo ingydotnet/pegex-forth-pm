@@ -1,4 +1,10 @@
 ---
+version: 0.08
+date:    Thu Jul 24 18:28:50 PDT 2014
+changes:
+- Support words / * pick ?dup -rot 2swap 2over 2dup nip tuck abs
+- Support words negate lshift rshift arshift emit
+---
 version: 0.07
 date:    Thu Jul 24 10:49:47 PDT 2014
 changes:

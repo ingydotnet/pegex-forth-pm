@@ -1,5 +1,5 @@
 package Pegex::Forth;
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
 use Pegex::Base;
 use Pegex::Parser;
@@ -51,7 +51,7 @@ token:
   | comment
   | word
 
-number: /( DIGIT+ ) +/
+number: /( DASH? DIGIT+ ) +/
 comment: /'(' + ALL*? ')' +/
 word: /( NS+ ) +/
 

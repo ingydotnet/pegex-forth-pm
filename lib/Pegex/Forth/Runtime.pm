@@ -7,9 +7,13 @@ has return_stack => [];
 
 sub call {
     my ($self, $word) = @_;
-    my $function = $self->dict->{$word}
+    my $function = $self->dict->{lc $word}
         or die "Undefined word: '$word'\n";
     $function->($self);
+}
+
+sub size {
+    scalar(@{$_[0]->{stack}});
 }
 
 sub push {
@@ -18,71 +22,151 @@ sub push {
 }
 
 sub pop {
-    my ($self, $count) = (@_, 1);
-    my $stack = $self->stack;
-    die "Stack underflow\n" unless @$stack >= $count;
+    my ($self, $count) = (@_);
+    my $stack = $self->{stack};
+    $self->underflow unless $count <= @$stack;
     return splice(@$stack, 0 - $count, $count);
+}
+
+sub peek {
+    my $self = shift;
+    my $stack = $self->{stack};
+    map {
+        my $i = $_ + 1;
+        $self->underflow unless $i <= @$stack;
+        my $a = $stack->[0 - $i];
+        return $a unless wantarray;
+    } @_;
+}
+
+sub underflow {
+    die "Stack underflow\n";
 }
 
 has dict => {
 
 '.' => sub {
-    my ($self) = @_;
-    my $num = $self->pop;
+    my $num = $_[0]->pop(1);
     print "$num\n";
 },
 
 '.s' => sub {
-    my ($self) = @_;
-    my $stack = $self->stack;
+    my $stack = $_[0]->stack;
     my $size = @$stack;
     print "<$size>" . join('', map " $_", @$stack) . "\n";
 },
 
 '+' => sub {
-    my ($self) = @_;
-    my ($a, $b) = $self->pop(2);
-    $self->push($a + $b);
+    my ($a, $b) = $_[0]->pop(2);
+    $_[0]->push($a + $b);
 },
 
 '-' => sub {
-    my ($self) = @_;
-    my ($a, $b) = $self->pop(2);
-    $self->push($a - $b);
+    my ($a, $b) = $_[0]->pop(2);
+    $_[0]->push($a - $b);
+},
+
+'*' => sub {
+    my ($a, $b) = $_[0]->pop(2);
+    $_[0]->push($a * $b);
+},
+
+'/' => sub {
+    my ($a, $b) = $_[0]->pop(2);
+    $_[0]->push(int($a / $b));
 },
 
 '0sp' => sub {
-    my ($self) = @_;
-    $self->{stack} = [];
+    $_[0]->{stack} = [];
 },
 
-dup => sub {
-    my ($self) = @_;
-    my ($a) = $self->pop(1);
-    $self->push($a, $a);
+'dup' => sub {
+    my ($a) = $_[0]->pop(1);
+    $_[0]->push($a, $a);
 },
 
-swap => sub {
-    my ($self) = @_;
-    my ($a, $b) = $self->pop(2);
-    $self->push($b, $a);
+'swap' => sub {
+    $_[0]->push(reverse $_[0]->pop(2));
 },
 
-over => sub {
-    my ($self) = @_;
-    my ($a, $b) = $self->pop(2);
-    $self->push($a, $b, $a);
+'over' => sub {
+    my ($a, $b) = $_[0]->pop(2);
+    $_[0]->push($a, $b, $a);
 },
 
-drop => sub {
-    my ($self) = @_;
-    my ($a) = $self->pop(1);
+'drop' => sub {
+    $_[0]->pop(1);
 },
 
-rot => sub {
-    my ($self) = @_;
-    my ($a, $b, $c) = $self->pop(3);
-    $self->push($b, $c, $a);
+'rot' => sub {
+    my ($a, $b, $c) = $_[0]->pop(3);
+    $_[0]->push($b, $c, $a);
+},
+
+'pick' => sub {
+    $_[0]->push(scalar $_[0]->peek($_[0]->pop(1)));
+},
+
+'?dup' => sub {
+    $_[0]->call('dup') if ($_[0]->peek(0) != 0);
+},
+
+'-rot' => sub {
+    my ($a, $b, $c) = $_[0]->pop(3);
+    $_[0]->push($c, $a, $b);
+},
+
+'2swap' => sub {
+    my ($a, $b, $c, $d) = $_[0]->pop(4);
+    $_[0]->push($c, $d, $a, $b);
+},
+
+'2over' => sub {
+    my ($a, $b, $c, $d) = $_[0]->pop(4);
+    $_[0]->push($a, $b, $c, $d, $a, $b);
+},
+
+'2dup' => sub {
+    my ($a, $b) = $_[0]->pop(2);
+    $_[0]->push($a, $b, $a, $b);
+},
+
+'nip' => sub {
+    my ($a, $b) = $_[0]->pop(2);
+    $_[0]->push($b);
+},
+
+'tuck' => sub {
+    my ($a, $b) = $_[0]->pop(2);
+    $_[0]->push($b, $a, $b);
+},
+
+'abs' => sub {
+    $_[0]->push(abs $_[0]->pop(1));
+},
+
+'negate' => sub {
+    $_[0]->push(0 - $_[0]->pop(1));
+},
+
+'lshift' => sub {
+    my ($a, $b) = $_[0]->pop(2);
+    $_[0]->push($a << $b);
+},
+
+'rshift' => sub {
+    my ($a, $b) = $_[0]->pop(2);
+    $_[0]->push($a >> $b);
+},
+
+'arshift' => sub {
+    use integer;
+    my ($a, $b) = $_[0]->pop(2);
+    $_[0]->push($a >> $b);
+},
+
+'emit' => sub {
+    print chr $_[0]->pop(1);
 },
 
 };
