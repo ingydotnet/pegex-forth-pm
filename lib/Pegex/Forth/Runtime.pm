@@ -1,15 +1,17 @@
 package Pegex::Forth::Runtime;
 use Pegex::Base;
-use Capture::Tiny ':all';
+use POSIX;
 
 has stack => [];
 has return_stack => [];
 
 sub call {
-    my ($self, $word) = @_;
-    my $function = $self->dict->{lc $word}
-        or die "Undefined word: '$word'\n";
-    $function->($self);
+    my $self = shift;
+    for my $word (@_) {
+        my $function = $self->dict->{lc $word}
+            or $self->error("Undefined word: '$word'");
+        $function->($self);
+    }
 }
 
 sub size {
@@ -40,7 +42,11 @@ sub peek {
 }
 
 sub underflow {
-    die "Stack underflow\n";
+    $_[0]->error("Stack underflow");
+}
+
+sub error {
+    die "$_[1]\n";
 }
 
 has dict => {
@@ -73,11 +79,31 @@ has dict => {
 
 '/' => sub {
     my ($a, $b) = $_[0]->pop(2);
-    $_[0]->push(int($a / $b));
+    $_[0]->error("Division by zero") if $b == 0;
+    $_[0]->push(floor($a / $b));
+},
+
+'/2' => sub {
+    my ($a) = $_[0]->pop(1);
+    $_[0]->push(floor($a / 2));
+},
+
+'mod' => sub {
+    my ($a, $b) = $_[0]->pop(2);
+    $_[0]->error("Division by zero") if $b == 0;
+    $_[0]->push($a % $b);
+},
+
+'/mod' => sub {
+    $_[0]->call(qw(2dup mod -rot /));
+},
+
+'clearstack' => sub {
+    $_[0]->{stack} = [];
 },
 
 '0sp' => sub {
-    $_[0]->{stack} = [];
+    $_[0]->call('clearstack');
 },
 
 'dup' => sub {
@@ -165,8 +191,22 @@ has dict => {
     $_[0]->push($a >> $b);
 },
 
+'min' => sub {
+    my ($a, $b) = $_[0]->pop(2);
+    $_[0]->push($a < $b ? $a : $b);
+},
+
+'max' => sub {
+    my ($a, $b) = $_[0]->pop(2);
+    $_[0]->push($a > $b ? $a : $b);
+},
+
 'emit' => sub {
     print chr $_[0]->pop(1);
+},
+
+words => sub {
+    print join(' ', sort keys %{$_[0]{dict}}) . "\n";
 },
 
 };

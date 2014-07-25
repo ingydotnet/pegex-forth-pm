@@ -1,13 +1,14 @@
 use File::Basename; use lib dirname(__FILE__); use TestPegexForth;
 
-my $forth;
-
 test_out '3 4 .', "4", '. works';
 test_out '3 4 .s', "<2> 3 4", '.s works';
 test_stack '3 4 +', '[7]', '+ works';
 test_stack '3 4 -', '[-1]', '- works';
 test_stack '3 4 *', '[12]', '* works';
 test_stack '35 4 /', '[8]', '/ works';
+test_stack '-9 /2', '[-5]', '/2 works';
+test_stack '19 5 mod', '[4]', 'mod works';
+test_stack '19 5 /mod', '[4,3]', '/mod works';
 test_stack '3 4 0sp', '[]', '0sp works';
 test_stack '3 4 dup', '[3,4,4]', 'dup works';
 test_stack '3 4 swap', '[4,3]', 'dup works';
@@ -28,4 +29,7 @@ test_stack '3 4 negate', '[3,-4]', 'negate works';
 test_stack '8 2 lshift', '[32]', 'lshift works';
 test_stack '8 2 rshift', '[2]', 'rshift works';
 test_stack '-8 2 arshift', '[-2]', 'arshift works';
+test_stack '3 4 min', '[3]', 'min works';
+test_stack '3 4 max', '[4]', 'max works';
 test_out '72 EMIT 105 EMIT', 'Hi', 'emit works';
+test_out 'words', '* + - -rot . .s / /2 /mod 0sp 2dup 2over 2swap ?dup abs arshift clearstack drop dup emit lshift max min mod negate nip over pick rot rshift swap tuck words', 'words works';

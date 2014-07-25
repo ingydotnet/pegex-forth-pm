@@ -34,9 +34,8 @@ sub test_out {
 
 sub test_err {
     my ($forth, $want, $label) = @_;
-    die my $got = capture_stderr {
-        eval { Pegex::Forth->new->run($forth) };
-    };
+    eval { Pegex::Forth->new->run($forth) };
+    my $got = $@;
     chomp $got;
     Test::More::is $got, $want, $label;
 }

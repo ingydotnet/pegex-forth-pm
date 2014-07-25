@@ -1,5 +1,5 @@
 package Pegex::Forth;
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 use Pegex::Base;
 use Pegex::Parser;
