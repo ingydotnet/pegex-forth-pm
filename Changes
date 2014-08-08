@@ -1,4 +1,9 @@
 ---
+version: 0.11
+date:    Fri Aug  8 12:55:09 PDT 2014
+changes:
+- Switch hashbang to '#!/usr/bin/env perl'
+---
 version: 0.10
 date:    Mon Aug  4 00:09:42 PDT 2014
 changes:
