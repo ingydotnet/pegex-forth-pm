@@ -1,19 +1,25 @@
-=meta: 0.0.1
+=meta: 0.0.2
 
 name: Pegex-Forth
-version: 0.14
+version: 0.15
 abstract: Forth Interpreter with a Pegex Compiler
 homepage: http://pegex.org
-
+language: perl
 license: perl
-copyright: 2014. Ingy döt Net.
+copyright: 2014
+
 author:
   name: Ingy döt Net
   email: ingy@cpan.org
+  homepage: http://ingy.net
   github: ingydotnet
   twitter: ingydotnet
   freenode: ingy
-  homepage: http://ingy.net
+
+devel:
+  git: https://github.com/ingydotnet/pegex-forth-pm
+  bug: https://github.com/ingydotnet/pegex-forth-pm/issues
+  irc: irc.freenode.net#pegex
 
 requires:
   perl: 5.8.1
@@ -22,12 +28,3 @@ requires:
 test:
   requires:
     Capture::Tiny: 0
-
-devel:
-  git: https://github.com/ingydotnet/pegex-forth-pm
-  bug: https://github.com/ingydotnet/pegex-forth-pm/issues
-  irc: irc.freenode.net#pegex
-
-=travis:
-  type: perl
-  irc: irc.freenode.net#pegex
