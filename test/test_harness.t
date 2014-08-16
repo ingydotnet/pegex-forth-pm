@@ -1,4 +1,5 @@
-use File::Basename; use lib dirname(__FILE__); use TestPegexForth;
+use lib -e 't' ? 't' : 'test';
+use TestPegexForth;
 
 my $forth;
 
